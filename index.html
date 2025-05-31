@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lot Size Calculator</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        max-width: 600px;
+        margin: auto;
+      }
+      label {
+        display: block;
+        margin-top: 15px;
+      }
+      input,
+      select {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+      }
+      .result {
+        margin-top: 20px;
+        font-weight: bold;
+        font-size: 18px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Lot Size Calculator</h2>
+
+    <label for="category">Select Category:</label>
+    <select id="category" onchange="showPairs()">
+      <option value="">--Choose--</option>
+      <option value="forex">Forex</option>
+      <option value="crypto">Crypto</option>
+    </select>
+
+    <select
+      style="display: none"
+      id="forexPairs"
+      class="pair-select"
+      onchange="calculate()"
+    >
+      <option value="10">EUR/USD</option>
+      <option value="10">US30</option>
+      <option value="10">XAUUSD</option>
+      <option value="10">AUD/CAD</option>
+      <option value="10">AUD/CHF</option>
+      <option value="10">AUD/JPY</option>
+      <option value="10">AUD/NZD</option>
+      <option value="10">AUD/USD</option>
+      <option value="10">CAD/CHF</option>
+      <option value="10">CAD/JPY</option>
+      <option value="10">CHF/JPY</option>
+      <option value="10">EUR/AUD</option>
+      <option value="10">EUR/CAD</option>
+      <option value="10">EUR/CHF</option>
+      <option value="10">EUR/GBP</option>
+      <option value="10">EUR/JPY</option>
+      <option value="10">EUR/NZD</option>
+      <option value="10">EUR/USD</option>
+      <option value="10">GBP/AUD</option>
+      <option value="10">GBP/CAD</option>
+      <option value="10">GBP/CHF</option>
+      <option value="10">GBP/JPY</option>
+      <option value="10">GBP/NZD</option>
+      <option value="10">GBP/USD</option>
+      <option value="10">NZD/CAD</option>
+      <option value="10">NZD/CHF</option>
+      <option value="10">NZD/JPY</option>
+      <option value="10">NZD/USD</option>
+      <option value="10">USD/CAD</option>
+      <option value="10">USD/CHF</option>
+      <option value="10">USD/JPY</option>
+      <option value="10">USD/MXN</option>
+      <option value="10">USD/NOK</option>
+      <option value="10">USD/ZAR</option>
+      <option value="10">XAG/USD</option>
+      <!-- Add other Forex pairs here with their pip values -->
+    </select>
+
+    <select
+      style="display: none"
+      id="cryptoPairs"
+      class="pair-select"
+      onchange="calculate()"
+    >
+      <option value="1">SPX500</option>
+      <option value="1">BTCUSD</option>
+      <option value="1">ETHUSD</option>
+      <!-- Add more Crypto pairs here -->
+    </select>
+
+    <label for="accountSize">Account Size ($):</label>
+    <input type="number" id="accountSize" value="5000" />
+
+    <label for="riskPercent">Risk Percentage (%):</label>
+    <input type="number" id="riskPercent" step="0.1" value="1" />
+
+    <label for="stopLoss">Stop Loss (pips/points):</label>
+    <input type="number" id="stopLoss" value="20" />
+
+    <div class="result">
+      <p id="riskAmount">Risk Amount: $0.00</p>
+      <p id="lotSize">Recommended Lot Size: 0.00</p>
+    </div>
+
+    <script>
+      const accountInput = document.getElementById("accountSize");
+      const riskInput = document.getElementById("riskPercent");
+      const slInput = document.getElementById("stopLoss");
+      const forexPairsInput = document.getElementById("forexPairs");
+      const cryptoPairsInput = document.getElementById("cryptoPairs");
+      const riskAmountDisplay = document.getElementById("riskAmount");
+      const lotSizeDisplay = document.getElementById("lotSize");
+
+      function showPairs() {
+        const category = document.getElementById("category").value;
+        forexPairsInput.style.display = "none";
+        cryptoPairsInput.style.display = "none";
+
+        if (category === "forex") {
+          forexPairsInput.style.display = "block";
+        } else if (category === "crypto") {
+          cryptoPairsInput.style.display = "block";
+        }
+
+        calculate(); // recalculate when switching categories
+      }
+
+      function getSelectedPipValue() {
+        const category = document.getElementById("category").value;
+        if (category === "forex") {
+          return parseFloat(forexPairsInput.value || 0);
+        } else if (category === "crypto") {
+          return parseFloat(cryptoPairsInput.value || 0);
+        }
+        return 0;
+      }
+
+      function calculate() {
+        const accountSize = parseFloat(accountInput.value) || 0;
+        const riskPercent = parseFloat(riskInput.value) || 0;
+        const stopLoss = parseFloat(slInput.value) || 0;
+        const pipValue = getSelectedPipValue();
+
+        const riskAmount = (accountSize * riskPercent) / 100;
+        const lotSize =
+          stopLoss > 0 && pipValue > 0
+            ? (riskAmount / (stopLoss * pipValue)).toFixed(2)
+            : 0;
+
+        riskAmountDisplay.textContent = `Risk Amount: $${riskAmount.toFixed(
+          2
+        )}`;
+        lotSizeDisplay.textContent = Recommended Lot Size: ${lotSize};
+      }
+
+      accountInput.addEventListener("input", calculate);
+      riskInput.addEventListener("input", calculate);
+      slInput.addEventListener("input", calculate);
+
+      // Initial calculation
+      calculate();
+    </script>
+  </body>
+</html>
